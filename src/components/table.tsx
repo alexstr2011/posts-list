@@ -1,6 +1,6 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {getData, POSTS_URL, USERS_URL} from "../api";
-import {TPosts, TUsers} from "../types";
+import {TableSortColumnEnum, TPosts, TUsers} from "../types";
 
 const Table = () => {
     const [users, setUsers] = useState<TUsers>([]);
@@ -11,6 +11,7 @@ const Table = () => {
     const [postsError, setPostsError] = useState('');
     const [search, setSearch] = useState('');
     const [userId, setUserId] = useState(0);
+    const [sort, setSort] = useState({column: TableSortColumnEnum.TITLE, asc: true});
 
     useEffect(() => {
         const fetchData = async () => {
@@ -42,21 +43,38 @@ const Table = () => {
         fetchData();
     }, [userId]);
 
-    const postsWithUserName = useMemo(() => {
-        const usersMap = new Map();
-        users.forEach(item => usersMap.set(item.id, item.name));
+    const usersMap = new Map();
+    users.forEach(item => usersMap.set(item.id, item.name));
+    const postsWithUserName = posts.map(item => ({...item, userName: usersMap.get(item.userId)}));
 
-        return posts.map(item => ({ ...item, userName: usersMap.get(item.userId)}));
-    }, [posts, users]);
+    const searchLowerCase = search.toLowerCase();
+    const filteredPosts = postsWithUserName.filter(item =>
+        item.title.toLowerCase().includes(searchLowerCase)
+        || item.body.toLowerCase().includes(searchLowerCase)
+        || item.userName.toLowerCase().includes(searchLowerCase)
+    );
 
-    const filteredPosts = useMemo(() => {
-        const searchLowerCase = search.toLowerCase();
-        return postsWithUserName.filter(item =>
-            item.title.toLowerCase().includes(searchLowerCase)
-            || item.body.toLowerCase().includes(searchLowerCase)
-            || item.userName.toLowerCase().includes(searchLowerCase)
-        );
-    }, [postsWithUserName, search]);
+    const sortedPosts = filteredPosts.sort((a, b) => {
+        const aValue = a[sort.column];
+        const bValue = b[sort.column];
+
+        let result = 0;
+        if (aValue < bValue) {
+            result = -1;
+        } else if (aValue > bValue) {
+            result = 1;
+        }
+
+        return result * (sort.asc ? 1 : -1);
+    });
+
+    const headerClickHandler = (column: TableSortColumnEnum) => {
+        if (sort.column === column) {
+            setSort({...sort, asc: !sort.asc});
+        } else {
+            setSort({column, asc: true});
+        }
+    }
 
     return (
         <div>
@@ -73,9 +91,29 @@ const Table = () => {
                     users.map(item => <option key={item.id} value={item.id}>{item.name}</option>)
                 }
             </select>
-            {
-                filteredPosts.map(item => <p>{item.userName} | {item.title} | {item.body}</p>)
-            }
+            <table>
+                <thead>
+                <tr>
+                    <th>№</th>
+                    <th onClick={()=>{headerClickHandler(TableSortColumnEnum.USER_NAME)}}>User</th>
+                    <th onClick={()=>{headerClickHandler(TableSortColumnEnum.TITLE)}}>Title</th>
+                    <th onClick={()=>{headerClickHandler(TableSortColumnEnum.BODY)}}>Body</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {
+                    sortedPosts.map((item, index) =>
+                        <tr>
+                            <td>{index + 1}</td>
+                            <td>{item.userName}</td>
+                            <td>{item.title}</td>
+                            <td>{item.body}</td>
+                        </tr>
+                    )
+                }
+                </tbody>
+            </table>
         </div>
     );
 };

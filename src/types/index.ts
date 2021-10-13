@@ -14,3 +14,9 @@ export type TPost = {
 };
 
 export type TPosts = Array<TPost>;
+
+export enum TableSortColumnEnum {
+    USER_NAME = 'userName',
+    TITLE = 'title',
+    BODY = 'body'
+}
