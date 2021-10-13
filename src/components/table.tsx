@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {getData, POSTS_URL, USERS_URL} from "../api";
-import {TPosts, TUser, TUsers} from "../types";
+import {TPosts, TUsers} from "../types";
 
 const Table = () => {
     const [users, setUsers] = useState<TUsers>([]);
@@ -11,7 +11,6 @@ const Table = () => {
     const [postsError, setPostsError] = useState('');
     const [search, setSearch] = useState('');
     const [userId, setUserId] = useState(0);
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -43,6 +42,22 @@ const Table = () => {
         fetchData();
     }, [userId]);
 
+    const postsWithUserName = useMemo(() => {
+        const usersMap = new Map();
+        users.forEach(item => usersMap.set(item.id, item.name));
+
+        return posts.map(item => ({ ...item, userName: usersMap.get(item.userId)}));
+    }, [posts, users]);
+
+    const filteredPosts = useMemo(() => {
+        const searchLowerCase = search.toLowerCase();
+        return postsWithUserName.filter(item =>
+            item.title.toLowerCase().includes(searchLowerCase)
+            || item.body.toLowerCase().includes(searchLowerCase)
+            || item.userName.toLowerCase().includes(searchLowerCase)
+        );
+    }, [postsWithUserName, search]);
+
     return (
         <div>
             <input
@@ -59,7 +74,7 @@ const Table = () => {
                 }
             </select>
             {
-                posts.map(item => <p>{item.userId} {item.title}</p>)
+                filteredPosts.map(item => <p>{item.userName} | {item.title} | {item.body}</p>)
             }
         </div>
     );

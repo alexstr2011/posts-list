@@ -7,6 +7,7 @@ export type TUsers = Array<TUser>;
 
 export type TPost = {
     userId: number;
+    userName?: string;
     id: number;
     title: string;
     body: string;
