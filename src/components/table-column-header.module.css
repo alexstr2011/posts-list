@@ -1,0 +1,15 @@
+.icon {
+    position: absolute;
+    right: 5px;
+    top: 0px;
+    width: 35px;
+    height: 35px;
+}
+
+.iconInactive {
+    opacity: 0.4;
+}
+
+.header {
+    position: relative;
+}
