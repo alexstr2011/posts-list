@@ -19,4 +19,9 @@ export enum TableSortColumnEnum {
     USER_NAME = 'userName',
     TITLE = 'title',
     BODY = 'body'
-}
+};
+
+export type TTableSort = {
+    column: TableSortColumnEnum,
+    asc: boolean
+};

@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {getData, POSTS_URL, USERS_URL} from "../api";
-import {TableSortColumnEnum, TPosts, TUsers} from "../types";
+import {TableSortColumnEnum, TPosts, TTableSort, TUsers} from "../types";
+import TableColumnHeader from "./table-column-header";
+import styles from './table.module.css';
 
 const Table = () => {
     const [users, setUsers] = useState<TUsers>([]);
@@ -11,7 +13,7 @@ const Table = () => {
     const [postsError, setPostsError] = useState('');
     const [search, setSearch] = useState('');
     const [userId, setUserId] = useState(0);
-    const [sort, setSort] = useState({column: TableSortColumnEnum.TITLE, asc: true});
+    const [sort, setSort] = useState<TTableSort>({column: TableSortColumnEnum.USER_NAME, asc: true});
 
     useEffect(() => {
         const fetchData = async () => {
@@ -76,44 +78,73 @@ const Table = () => {
         }
     }
 
+    const isLoading = !postsError && !usersError && (isPostsLoading || isUsersLoading);
+
     return (
         <div>
             <input
                 type='text'
                 value={search}
-                onChange={(e)=>setSearch(e.currentTarget.value)}/>
+                onChange={(e) => setSearch(e.currentTarget.value)}/>
             <select
                 value={userId}
-                onChange={(e)=>setUserId(Number(e.currentTarget.value))}
+                onChange={(e) => setUserId(Number(e.currentTarget.value))}
             >
                 <option key={0} value={0}>none</option>
                 {
                     users.map(item => <option key={item.id} value={item.id}>{item.name}</option>)
                 }
             </select>
-            <table>
-                <thead>
-                <tr>
-                    <th>№</th>
-                    <th onClick={()=>{headerClickHandler(TableSortColumnEnum.USER_NAME)}}>User</th>
-                    <th onClick={()=>{headerClickHandler(TableSortColumnEnum.TITLE)}}>Title</th>
-                    <th onClick={()=>{headerClickHandler(TableSortColumnEnum.BODY)}}>Body</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {
-                    sortedPosts.map((item, index) =>
-                        <tr>
-                            <td>{index + 1}</td>
-                            <td>{item.userName}</td>
-                            <td>{item.title}</td>
-                            <td>{item.body}</td>
-                        </tr>
-                    )
-                }
-                </tbody>
-            </table>
+            {
+                postsError && <p>{`Posts: ${postsError}`}</p>
+            }
+            {
+                usersError && <p>{`Users: ${usersError}`}</p>
+            }
+            {
+                isLoading && <p>Loading...</p>
+            }
+            {!postsError && !usersError && !isLoading && (
+                <table className={styles.table}>
+                    <thead>
+                    <tr>
+                        <TableColumnHeader title='№'/>
+                        <TableColumnHeader
+                            title='User'
+                            column={TableSortColumnEnum.USER_NAME}
+                            sort={sort}
+                            clickHandler={headerClickHandler}
+                        />
+                        <TableColumnHeader
+                            title='Title'
+                            column={TableSortColumnEnum.TITLE}
+                            sort={sort}
+                            clickHandler={headerClickHandler}
+                        />
+                        <TableColumnHeader
+                            title='Body'
+                            column={TableSortColumnEnum.BODY}
+                            sort={sort}
+                            clickHandler={headerClickHandler}
+                        />
+                        <TableColumnHeader title='Actions'/>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        sortedPosts.map((item, index) =>
+                            <tr>
+                                <td>{index + 1}</td>
+                                <td>{item.userName}</td>
+                                <td>{item.title}</td>
+                                <td>{item.body}</td>
+                                <td></td>
+                            </tr>
+                        )
+                    }
+                    </tbody>
+                </table>
+            )}
         </div>
     );
 };
