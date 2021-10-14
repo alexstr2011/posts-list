@@ -3,8 +3,10 @@ import {sendRequest, POSTS_URL, USERS_URL} from "../api";
 import {TableSortColumnEnum, TPosts, TTableSort, TUsers} from "../types";
 import TableColumnHeader from "./table-column-header";
 import styles from './table.module.css';
+import {Redirect, useHistory} from "react-router-dom";
 
 const Table = () => {
+    const history = useHistory();
     const [users, setUsers] = useState<TUsers>([]);
     const [posts, setPosts] = useState<TPosts>([]);
     const [isUsersLoading, setIsUsersLoading] = useState(false);
@@ -88,6 +90,10 @@ const Table = () => {
         }
     }
 
+    const editClickHandler = (id: number) => {
+        history.push('/posts/' + id);
+    }
+
     const isLoading = !postsError && !usersError && (isPostsLoading || isUsersLoading);
 
     return (
@@ -149,6 +155,7 @@ const Table = () => {
                                 <td>{item.title}</td>
                                 <td>{item.body}</td>
                                 <td><button onClick={()=>{deleteClickHandler(item.id)}}>Delete</button></td>
+                                <td><button onClick={()=>{editClickHandler(item.id)}}>Edit</button></td>
                             </tr>
                         )
                     }
