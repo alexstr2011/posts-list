@@ -3,6 +3,7 @@ import {useHistory, useParams} from "react-router-dom";
 import {TPost} from "../types";
 import {POSTS_URL, sendRequest} from "../api";
 import Loader from "./loader";
+import styles from './post-form.module.css';
 
 const PostForm = () => {
     const history = useHistory();
@@ -24,7 +25,7 @@ const PostForm = () => {
             }
         }
         fetchData();
-    }, []);
+    }, [id]);
 
     const changeHandler = (e: React.ChangeEvent<HTMLInputElement>|React.ChangeEvent<HTMLTextAreaElement>) => {
         const target = e.currentTarget;
@@ -52,34 +53,38 @@ const PostForm = () => {
     };
 
     return (
-        <div>
-            <h1>Edit the post:</h1>
+        <div className={styles.wrapper}>
+            <h1 className={styles.header}>Edit the post:</h1>
             {
-                postError && <p>{postError}</p>
+                postError && <p className={styles.error}>{postError}</p>
             }
             {
                 isPostLoading && <Loader/>
             }
             {!postError && !isPostLoading && post &&
-            <form onSubmit={submitHandler}>
-                <label>Title
-                    <input
-                        type='text'
+            <form onSubmit={submitHandler} className={styles.form}>
+                <label className={styles.inputLabel}>
+                    <span>Title:</span>
+                    <textarea
                         name='title'
                         value={post.title}
-                        placeholder='title'
                         onChange={changeHandler}
+                        className={styles.textareaTitle}
                     />
                 </label>
-                <label>Body
+                <label className={styles.inputLabel}>
+                    <span>Body:</span>
                     <textarea
                         name='body'
                         value={post.body}
                         onChange={changeHandler}
+                        className={styles.textareaBody}
                     />
                 </label>
-                <button type='submit'>Save</button>
-                <button type='button' onClick={cancelHandler}>Cancel</button>
+                <div className={styles.buttonWrapper}>
+                    <button type='submit' className={styles.button}>Save</button>
+                    <button type='button' onClick={cancelHandler} className={styles.button}>Cancel</button>
+                </div>
             </form>
             }
         </div>

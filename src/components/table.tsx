@@ -134,10 +134,10 @@ const Table = () => {
                 </label>
             </div>
             {
-                postsError && <p>{`Posts: ${postsError}`}</p>
+                postsError && <p className={styles.error}>{`Posts: ${postsError}`}</p>
             }
             {
-                usersError && <p>{`Users: ${usersError}`}</p>
+                usersError && <p className={styles.error}>{`Users: ${usersError}`}</p>
             }
             {
                 isLoading && <Loader/>

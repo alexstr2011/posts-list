@@ -1,0 +1,69 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header {
+    margin: 20px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 20px;
+}
+
+.inputLabel {
+    margin-bottom: 20px;
+}
+
+.inputLabel span {
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 1.5rem;
+    display: inline-block;
+    width: 75px;
+    vertical-align: top;
+}
+
+.inputLabel textarea {
+    font-size: 1.2rem;
+    resize: none;
+    padding: 5px;
+    width: 350px;
+}
+
+.textareaTitle {
+    height: 150px;
+}
+
+.textareaBody {
+    height: 250px;
+}
+
+.buttonWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.button {
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 10px;
+    margin: 0 10px;
+    width: 100px;
+}
+
+.button:active {
+    transform: translate(2px, 2px);
+}
+
+.error {
+    font-weight: bold;
+    font-size: 2rem;
+    color: red;
+    margin: 20px;
+}
