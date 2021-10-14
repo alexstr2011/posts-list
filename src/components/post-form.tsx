@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from "react-router-dom";
 import {TPost} from "../types";
 import {POSTS_URL, sendRequest} from "../api";
+import Loader from "./loader";
 
 const PostForm = () => {
     const history = useHistory();
@@ -52,15 +53,15 @@ const PostForm = () => {
 
     return (
         <div>
+            <h1>Edit the post:</h1>
             {
                 postError && <p>{postError}</p>
             }
             {
-                isPostLoading && <p>Loading...</p>
+                isPostLoading && <Loader/>
             }
             {!postError && !isPostLoading && post &&
             <form onSubmit={submitHandler}>
-                <h1>Edit the post:</h1>
                 <label>Title
                     <input
                         type='text'

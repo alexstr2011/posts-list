@@ -4,6 +4,7 @@ import {TableSortColumnEnum, TPosts, TTableSort, TUsers} from "../types";
 import TableColumnHeader from "./table-column-header";
 import styles from './table.module.css';
 import {Redirect, useHistory} from "react-router-dom";
+import Loader from "./loader";
 
 const Table = () => {
     const history = useHistory();
@@ -118,7 +119,7 @@ const Table = () => {
                 usersError && <p>{`Users: ${usersError}`}</p>
             }
             {
-                isLoading && <p>Loading...</p>
+                isLoading && <Loader/>
             }
             {!postsError && !usersError && !isLoading && (
                 <table className={styles.table}>
@@ -154,8 +155,16 @@ const Table = () => {
                                 <td>{item.userName}</td>
                                 <td>{item.title}</td>
                                 <td>{item.body}</td>
-                                <td><button onClick={()=>{deleteClickHandler(item.id)}}>Delete</button></td>
-                                <td><button onClick={()=>{editClickHandler(item.id)}}>Edit</button></td>
+                                <td>
+                                    <button onClick={() => {
+                                        deleteClickHandler(item.id)
+                                    }}>Delete
+                                    </button>
+                                    <button onClick={() => {
+                                        editClickHandler(item.id)
+                                    }}>Edit
+                                    </button>
+                                </td>
                             </tr>
                         )
                     }
