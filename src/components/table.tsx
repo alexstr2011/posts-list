@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {getData, POSTS_URL, USERS_URL} from "../api";
+import {sendRequest, POSTS_URL, USERS_URL} from "../api";
 import {TableSortColumnEnum, TPosts, TTableSort, TUsers} from "../types";
 import TableColumnHeader from "./table-column-header";
 import styles from './table.module.css';
@@ -19,7 +19,7 @@ const Table = () => {
         const fetchData = async () => {
             setIsUsersLoading(true);
             setUsersError('');
-            const result = await getData(USERS_URL);
+            const result = await sendRequest(USERS_URL);
             setIsUsersLoading(false);
             if (result.error) {
                 setUsersError(result.error);
@@ -34,7 +34,7 @@ const Table = () => {
         const fetchData = async () => {
             setIsPostsLoading(true);
             setPostsError('');
-            const result = await getData(POSTS_URL + (userId ? `?userId=${userId}` : ''));
+            const result = await sendRequest(POSTS_URL + (userId ? `?userId=${userId}` : ''));
             setIsPostsLoading(false);
             if (result.error) {
                 setPostsError(result.error);
@@ -75,6 +75,16 @@ const Table = () => {
             setSort({...sort, asc: !sort.asc});
         } else {
             setSort({column, asc: true});
+        }
+    }
+
+    const deleteClickHandler = async (id: number) => {
+        const result = await sendRequest(POSTS_URL + '/' + id, {method: 'DELETE'});
+        if (result.error) {
+            console.log(result.error);
+        } else {
+            const index = posts.findIndex(item => item.id === id);
+            setPosts([...posts.slice(0, index), ...posts.slice(index + 1)]);
         }
     }
 
@@ -133,12 +143,12 @@ const Table = () => {
                     <tbody>
                     {
                         sortedPosts.map((item, index) =>
-                            <tr>
+                            <tr key={item.id}>
                                 <td>{index + 1}</td>
                                 <td>{item.userName}</td>
                                 <td>{item.title}</td>
                                 <td>{item.body}</td>
-                                <td></td>
+                                <td><button onClick={()=>{deleteClickHandler(item.id)}}>Delete</button></td>
                             </tr>
                         )
                     }
