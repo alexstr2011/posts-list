@@ -1,3 +1,16 @@
+.header {
+    position: relative;
+    cursor: pointer;
+}
+
+.header:hover .icon {
+    opacity: 0.7;
+}
+
+.header:active .icon {
+    transform: translate(2px, 2px);
+}
+
 .icon {
     position: absolute;
     right: 5px;
@@ -7,9 +20,6 @@
 }
 
 .iconInactive {
-    opacity: 0.4;
+    opacity: 0.2;
 }
 
-.header {
-    position: relative;
-}

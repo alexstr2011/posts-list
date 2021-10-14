@@ -29,7 +29,7 @@ const TableColumnHeader: FC<ITableColumnHeaderProps> =
         }
 
         return (
-            <th onClick={onClick} className={styles.header}>
+            <th onClick={onClick} className={styles.header} title='Press to sort'>
                 {title}
                 {
                     isArrowUp &&

@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from 'react';
+import {useHistory} from "react-router-dom";
 import {sendRequest, POSTS_URL, USERS_URL} from "../api";
 import {TableSortColumnEnum, TPosts, TTableSort, TUsers} from "../types";
 import TableColumnHeader from "./table-column-header";
-import styles from './table.module.css';
-import {Redirect, useHistory} from "react-router-dom";
 import Loader from "./loader";
+import {ReactComponent as EditIcon} from '../images/edit.svg';
+import {ReactComponent as DeleteIcon} from '../images/delete.svg';
+import styles from './table.module.css';
 
 const Table = () => {
     const history = useHistory();
@@ -99,19 +101,38 @@ const Table = () => {
 
     return (
         <div>
-            <input
-                type='text'
-                value={search}
-                onChange={(e) => setSearch(e.currentTarget.value)}/>
-            <select
-                value={userId}
-                onChange={(e) => setUserId(Number(e.currentTarget.value))}
-            >
-                <option key={0} value={0}>none</option>
-                {
-                    users.map(item => <option key={item.id} value={item.id}>{item.name}</option>)
-                }
-            </select>
+            <h1 className={styles.header}>Posts:</h1>
+            <div className={styles.inputLabelWrapper}>
+                <label className={styles.inputLabel}>
+                    <span>Search:</span>
+                    <input
+                        type='text'
+                        placeholder='type to search'
+                        value={search}
+                        onChange={(e) => setSearch(e.currentTarget.value)}/>
+                </label>
+                <label className={styles.inputLabel}>
+                    <span>User:</span>
+                    <select
+                        value={userId}
+                        onChange={(e) => setUserId(Number(e.currentTarget.value))}
+                    >
+                        <option key={0} value={0}>none</option>
+                        {
+                            users.sort((a, b) => {
+                                if (a.name < b.name) {
+                                    return -1;
+                                } else if (a.name > b.name) {
+                                    return 1;
+                                } else {
+                                    return 0;
+                                }
+                            })
+                                .map(item => <option key={item.id} value={item.id}>{item.name}</option>)
+                        }
+                    </select>
+                </label>
+            </div>
             {
                 postsError && <p>{`Posts: ${postsError}`}</p>
             }
@@ -156,14 +177,16 @@ const Table = () => {
                                 <td>{item.title}</td>
                                 <td>{item.body}</td>
                                 <td>
-                                    <button onClick={() => {
-                                        deleteClickHandler(item.id)
-                                    }}>Delete
-                                    </button>
-                                    <button onClick={() => {
-                                        editClickHandler(item.id)
-                                    }}>Edit
-                                    </button>
+                                    <div className={styles.actionsWrapper}>
+                                        <EditIcon
+                                            className={styles.icon}
+                                            title='Edit'
+                                            onClick={() => {editClickHandler(item.id)}}/>
+                                        <DeleteIcon
+                                            className={styles.icon}
+                                            title='Delete'
+                                            onClick={() => {deleteClickHandler(item.id)}}/>
+                                    </div>
                                 </td>
                             </tr>
                         )
