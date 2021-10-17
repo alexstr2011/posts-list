@@ -1,0 +1,25 @@
+.header {
+    position: relative;
+    cursor: pointer;
+}
+
+.header:hover .icon {
+    opacity: 0.7;
+}
+
+.header:active .icon {
+    transform: translate(2px, 2px);
+}
+
+.icon {
+    position: absolute;
+    right: 5px;
+    top: 0px;
+    width: 35px;
+    height: 35px;
+}
+
+.iconInactive {
+    opacity: 0.2;
+}
+
